@@ -177,6 +177,32 @@ exports.getSingleData = async (req, res) => {
 
 
 
+exports.getRelatedProducts = async (req, res) => {
+    try {
+        const { id } = req.params; // Get the ID from the URL path parameters
+        // First, retrieve the single data to get the address
+        const singleData = await fileUploadModel.findOne({ _id: id });
+        if (!singleData) {
+            return res.status(404).json({ success: false, message: "Single data not found" });
+        }
+        const address = singleData.address; // Retrieve the address from the single data
+        // Query the database to find related products based on the address
+        const relatedProducts = await fileUploadModel.find({ address: address }).limit(5); // Limiting to 5 related products for example
+        res.json({ success: true, relatedProducts });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};
+
+
+
+
+
+
+
+
+
 
 exports.updateProperty = async (req, res) => {
     try {
@@ -227,6 +253,10 @@ exports.deleteProperty = async (req, res) => {
         return res.status(500).json({ success: false, message: `Error while deleting property: ${error.message}` });
     }
 };
+
+
+
+
 
 
 
